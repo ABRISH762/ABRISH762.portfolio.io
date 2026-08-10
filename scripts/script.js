@@ -1,4 +1,3 @@
-
 /* =========================================================
    ABRAHAM ASHAGRE - PROFESSIONAL PORTFOLIO
    File: js/script.js
@@ -6,23 +5,11 @@
 
 
 /* =========================================================
-   1. SELECT ELEMENTS
-   ========================================================= */
+   1. MOBILE NAVIGATION
+========================================================= */
 
 const menuToggle = document.querySelector(".menu-toggle");
-
 const navMenu = document.querySelector(".nav-menu");
-
-const navLinks = document.querySelectorAll(".nav-menu a");
-
-const sections = document.querySelectorAll("main section");
-
-const footerYear = document.querySelector(".footer");
-
-
-/* =========================================================
-   2. MOBILE NAVIGATION
-   ========================================================= */
 
 if (menuToggle && navMenu) {
 
@@ -30,30 +17,39 @@ if (menuToggle && navMenu) {
 
         navMenu.classList.toggle("active");
 
-        /*
-         * Change the menu icon depending
-         * on whether the menu is open.
-         */
+        const icon = menuToggle.querySelector("i");
 
         if (navMenu.classList.contains("active")) {
 
-            menuToggle.textContent = "✕";
-
-            menuToggle.setAttribute(
-                "aria-label",
-                "Close navigation menu"
-            );
+            icon.classList.remove("fa-bars");
+            icon.classList.add("fa-xmark");
 
         } else {
 
-            menuToggle.textContent = "☰";
-
-            menuToggle.setAttribute(
-                "aria-label",
-                "Open navigation menu"
-            );
+            icon.classList.remove("fa-xmark");
+            icon.classList.add("fa-bars");
 
         }
+
+    });
+
+
+    /* Close menu when a navigation link is clicked */
+
+    const navLinks = document.querySelectorAll(".nav-menu a");
+
+    navLinks.forEach(function (link) {
+
+        link.addEventListener("click", function () {
+
+            navMenu.classList.remove("active");
+
+            const icon = menuToggle.querySelector("i");
+
+            icon.classList.remove("fa-xmark");
+            icon.classList.add("fa-bars");
+
+        });
 
     });
 
@@ -61,80 +57,43 @@ if (menuToggle && navMenu) {
 
 
 /* =========================================================
-   3. CLOSE MOBILE MENU AFTER CLICKING A LINK
-   ========================================================= */
+   2. ACTIVE NAVIGATION LINK
+========================================================= */
 
-navLinks.forEach(function (link) {
-
-    link.addEventListener("click", function () {
-
-        if (navMenu) {
-
-            navMenu.classList.remove("active");
-
-        }
-
-        if (menuToggle) {
-
-            menuToggle.textContent = "☰";
-
-            menuToggle.setAttribute(
-                "aria-label",
-                "Open navigation menu"
-            );
-
-        }
-
-    });
-
-});
-
-
-/* =========================================================
-   4. ACTIVE NAVIGATION LINK
-   ========================================================= */
+const sections = document.querySelectorAll("section[id]");
+const navigationLinks = document.querySelectorAll(".nav-menu a");
 
 function updateActiveNavigation() {
 
     let currentSection = "";
 
-    const scrollPosition =
-        window.scrollY + 150;
+    const scrollPosition = window.scrollY + 150;
 
 
     sections.forEach(function (section) {
 
-        const sectionTop =
-            section.offsetTop;
-
-        const sectionHeight =
-            section.offsetHeight;
-
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.offsetHeight;
 
         if (
             scrollPosition >= sectionTop &&
             scrollPosition < sectionTop + sectionHeight
         ) {
 
-            currentSection =
-                section.getAttribute("id");
+            currentSection = section.getAttribute("id");
 
         }
 
     });
 
 
-    navLinks.forEach(function (link) {
+    navigationLinks.forEach(function (link) {
 
         link.classList.remove("active");
 
-        const linkTarget =
-            link.getAttribute("href");
+        const target = link.getAttribute("href");
 
-
-        if (
-            linkTarget === "#" + currentSection
-        ) {
+        if (target === "#" + currentSection) {
 
             link.classList.add("active");
 
@@ -150,30 +109,32 @@ window.addEventListener(
     updateActiveNavigation
 );
 
-
-/* Run once when page loads */
-
-updateActiveNavigation();
+window.addEventListener(
+    "load",
+    updateActiveNavigation
+);
 
 
 /* =========================================================
-   5. SCROLL REVEAL ANIMATION
-   ========================================================= */
+   3. SCROLL REVEAL ANIMATION
+========================================================= */
 
 const revealElements = document.querySelectorAll(
+    ".section-heading, " +
+    ".about-card, " +
+    ".stat-card, " +
+    ".education-card, " +
     ".skill-card, " +
+    ".project-card, " +
     ".achievement-card, " +
     ".document-card, " +
-    ".contact-card, " +
-    ".education-card, " +
-    ".project-card"
+    ".contact-card"
 );
 
 
 /*
- * Add the hidden class through JavaScript.
- * The CSS file can then animate these elements.
- */
+   Add the reveal class to elements
+*/
 
 revealElements.forEach(function (element) {
 
@@ -183,39 +144,39 @@ revealElements.forEach(function (element) {
 
 
 /*
- * Intersection Observer detects when
- * elements enter the screen.
- */
+   Create Intersection Observer
+*/
 
-const revealObserver =
-    new IntersectionObserver(
+const revealObserver = new IntersectionObserver(
 
-        function (entries, observer) {
+    function (entries, observer) {
 
-            entries.forEach(function (entry) {
+        entries.forEach(function (entry) {
 
-                if (entry.isIntersecting) {
+            if (entry.isIntersecting) {
 
-                    entry.target.classList.add(
-                        "reveal-visible"
-                    );
+                entry.target.classList.add(
+                    "reveal-visible"
+                );
 
-                    observer.unobserve(
-                        entry.target
-                    );
+                observer.unobserve(entry.target);
 
-                }
+            }
 
-            });
+        });
 
-        },
+    },
 
-        {
-            threshold: 0.12
-        }
+    {
+        threshold: 0.12
+    }
 
-    );
+);
 
+
+/*
+   Observe all reveal elements
+*/
 
 revealElements.forEach(function (element) {
 
@@ -225,80 +186,131 @@ revealElements.forEach(function (element) {
 
 
 /* =========================================================
-   6. SMOOTH SCROLL FOR INTERNAL LINKS
-   ========================================================= */
+   4. SMOOTH SCROLLING
+========================================================= */
 
-document.querySelectorAll(
+const internalLinks = document.querySelectorAll(
     'a[href^="#"]'
-).forEach(function (link) {
+);
 
-    link.addEventListener(
-        "click",
-        function (event) {
+internalLinks.forEach(function (link) {
 
-            const targetId =
-                this.getAttribute("href");
+    link.addEventListener("click", function (event) {
 
-            const target =
-                document.querySelector(targetId);
+        const targetId =
+            link.getAttribute("href");
 
+        if (
+            !targetId ||
+            targetId === "#"
+        ) {
 
-            if (target) {
-
-                event.preventDefault();
-
-                target.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start"
-                });
-
-            }
+            return;
 
         }
-    );
+
+
+        const targetElement =
+            document.querySelector(targetId);
+
+
+        if (targetElement) {
+
+            event.preventDefault();
+
+            const header =
+                document.querySelector(".header");
+
+            const headerHeight =
+                header ? header.offsetHeight : 0;
+
+
+            const targetPosition =
+                targetElement.offsetTop -
+                headerHeight;
+
+
+            window.scrollTo({
+
+                top: targetPosition,
+
+                behavior: "smooth"
+
+            });
+
+        }
+
+    });
 
 });
 
 
 /* =========================================================
-   7. CURRENT YEAR IN FOOTER
-   ========================================================= */
+   5. CURRENT YEAR
+========================================================= */
 
-if (footerYear) {
+const footer = document.querySelector(".footer");
+
+if (footer) {
 
     const currentYear =
         new Date().getFullYear();
 
-
-    const paragraphs =
-        footerYear.querySelectorAll("p");
-
-
-    if (paragraphs.length > 0) {
-
-        paragraphs[0].innerHTML =
-            "© " +
-            currentYear +
-            " Abraham Ashagre. All Rights Reserved.";
-
-    }
+    footer.innerHTML =
+        footer.innerHTML.replace(
+            "© 2026",
+            "© " + currentYear
+        );
 
 }
 
 
 /* =========================================================
-   8. PREVENT EMPTY LINKS
-   ========================================================= */
+   6. PROFILE IMAGE FALLBACK
+========================================================= */
 
-document.querySelectorAll(
-    'a[href="#"]'
-).forEach(function (link) {
+const profileImage =
+    document.querySelector(
+        ".profile-frame img"
+    );
+
+
+if (profileImage) {
+
+    profileImage.addEventListener(
+        "error",
+        function () {
+
+            console.log(
+                "Profile image could not be loaded."
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   7. DOCUMENT LINK CHECK
+========================================================= */
+
+const documentLinks =
+    document.querySelectorAll(
+        '.document-btn[href$=".pdf"]'
+    );
+
+
+documentLinks.forEach(function (link) {
 
     link.addEventListener(
         "click",
-        function (event) {
+        function () {
 
-            event.preventDefault();
+            console.log(
+                "Opening document:",
+                link.getAttribute("href")
+            );
 
         }
     );
@@ -307,39 +319,16 @@ document.querySelectorAll(
 
 
 /* =========================================================
-   9. KEYBOARD ACCESSIBILITY
-   ========================================================= */
+   8. PAGE LOAD
+========================================================= */
 
-document.addEventListener(
-    "keydown",
-    function (event) {
+window.addEventListener(
+    "load",
+    function () {
 
-        /*
-         * Close mobile navigation
-         * when the Escape key is pressed.
-         */
-
-        if (
-            event.key === "Escape" &&
-            navMenu &&
-            navMenu.classList.contains("active")
-        ) {
-
-            navMenu.classList.remove("active");
-
-
-            if (menuToggle) {
-
-                menuToggle.textContent = "☰";
-
-                menuToggle.setAttribute(
-                    "aria-label",
-                    "Open navigation menu"
-                );
-
-            }
-
-        }
+        document.body.classList.add(
+            "page-loaded"
+        );
 
     }
 );
